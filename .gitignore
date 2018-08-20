@@ -1,0 +1,6 @@
+.DS_STORE
+.runtime/
+node_modules/
+coverage/
+__demo__/file/
+__test__/file/

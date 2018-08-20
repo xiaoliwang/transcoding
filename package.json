@@ -1,0 +1,24 @@
+{
+  "name": "compression",
+  "version": "0.0.1",
+  "description": "a sound compression tool",
+  "main": "index.js",
+  "author": "TomCao <jiepengthegreat@126.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "devDependencies": {
+    "jest": "^23.5.0"
+  },
+  "dependencies": {
+    "ali-oss": "^6.0.1",
+    "async": "^2.6.1",
+    "mkdirp": "^0.5.1",
+    "mysql2": "^1.6.1",
+    "nedb": "^1.8.0",
+    "ramda": "^0.25.0",
+    "winston": "^3.0.0",
+    "winston-daily-rotate-file": "^3.3.1"
+  }
+}
