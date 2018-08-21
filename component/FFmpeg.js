@@ -4,7 +4,6 @@ const { execSync } = require("child_process");
 const { ffmpeg, ffprobe, TEMP_PATH } = require("../config/system");
 const { getFileName } = require("../lib/MyFile");
 
-
 /**
  * 获取音频相关信息
  * 
@@ -44,32 +43,5 @@ function toMP3(input_file, rate) {
     return output_file;
 }
 
-function getSchemes(bit_rate) {
-    let schemes = [];
-    switch(true) {
-        case (bit_rate > 128):
-            schemes.push({
-                filed: "soundurl_128",
-                rate: 128,
-                dir: "128BIT",
-                original: false,
-            });
-        case (bit_rate > 32) :
-            schemes.push({
-                filed: "soundurl_32",
-                rate: 32,
-                dir: "32BIT",
-            });
-        default:
-            schemes.push({
-                filed: "soundurl_64",
-                rate: bit_rate,
-                dir: "MP3",
-            });
-    }
-    return schemes;
-}
-
 exports.getSoundInfo = getSoundInfo;
 exports.toMP3 = toMP3;
-exports.getSchemes = getSchemes;

@@ -4,3 +4,4 @@ node_modules/
 coverage/
 __demo__/file/
 __test__/file/
+config/*.js

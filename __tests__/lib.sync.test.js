@@ -81,7 +81,7 @@ describe("Test all function in sync module", () => {
     });
 
     test("throw an error inside once", () => {
-        expect(wrong_func()).rejects.toThrow(sync.SyncError);
+        expect(wrong_func()).rejects.toThrow();
     });
 
 });

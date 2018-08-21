@@ -1,0 +1,24 @@
+const fs = require("fs");
+const path = require("path");
+
+exports.ENV = "dev"; // dev or prod
+
+exports.ffprobe = "";
+exports.ffmpeg = ""
+
+// PATH
+const BASE_PATH = path.join(__dirname, '/..');
+const RUNTIME_PATH = path.join(BASE_PATH, ".runtime");
+const TEMP_PATH = path.join(RUNTIME_PATH, "temp");
+const LOG_PATH = path.join(RUNTIME_PATH, "log");
+const DB_PATH = path.join(RUNTIME_PATH, "db");
+const DB_FILE = path.join(DB_PATH, "datafile");
+
+let PATHS = [RUNTIME_PATH, TEMP_PATH, LOG_PATH, DB_PATH];
+for (PATH of PATHS) {
+    if (!fs.existsSync(PATH)) fs.mkdirSync(PATH);
+}
+
+exports.TEMP_PATH = TEMP_PATH;
+exports.LOG_PATH = LOG_PATH;
+exports.DB_FILE = DB_FILE;
