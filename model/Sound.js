@@ -70,7 +70,7 @@ class Sound {
             let conditions = R.map((sub_task) => 
                 ({ key: sub_task.filed, value: sub_task.remote_path }), task.sub_tasks);
             await this.updateStatus(conditions);
-            logger.info(`sound ${id} compressed successed`);
+            logger.info(`sound ${this.id} compressed successed`);
         } catch(e) {
             logger.error(`the error sound_id is ${this.id}。reason is ${e.stack || e}`);
             // @TODO update sounds checked = -3;

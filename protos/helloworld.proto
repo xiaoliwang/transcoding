@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package helloworld;
+
+service Greeter {
+    rpc SayHello (HelloRequest) returns (HelloReply) {}
+    rpc SayHelloAgain (HelloRequest) returns (HelloReply) {}
+}
+
+// field numbers in the range 1 through 15 take one byte to encode
+// field numbers in the range 16 through 2047 take two bytes
+message HelloRequest {
+    int32 num = 1;
+    string name = 2;
+}
+
+message HelloReply {
+    string message = 1;
+    repeated int32 nums = 2;
+}

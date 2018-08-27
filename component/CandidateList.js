@@ -1,5 +1,6 @@
 const R = require("ramda");
 const { getDB } = require("../lib/DBConnection");
+const { getData } = require("../lib/TestTool");
 
 const candidates = [];
 
@@ -7,19 +8,20 @@ async function getSounds() {
     let conn = await getDB();
     let sql = `SELECT id, user_id, duration, soundurl, checked FROM m_sound where checked = -1 order by id limit 10`;
     let rows = await conn.find(sql);
+    console.log(rows);
+    
     return rows;
 }
 
 candidates.__proto__.update = async function() {
-    let self = this;
     let rows = await getSounds();
-    let time = new Date().getTime();
+    let time = Math.floor(Date.now() / 1000);
     for (let row of rows) {
         for (let sound of this) {
             if (row.id === sound.id) break;
         }
         row.time = time;
-        row.run = 0;
+        row.run = false;
         this.push(row);
     }
 }
@@ -27,9 +29,9 @@ candidates.__proto__.update = async function() {
 candidates.__proto__.getTasks = function(num) {
     let tasks = [];
     for (let sound of this) {
-        if (!num) break;
-        if (0 === sound.run) {
-            sound.run = 1;
+        if (num <= 0) break;
+        if (false === sound.run) {
+            sound.run = true;
             tasks.push(sound);
             num--;
         }

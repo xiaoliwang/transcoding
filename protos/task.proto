@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package compression;
+
+service Task {
+    rpc GetTasks (GetTaskRequest) returns (GetTaskReply) {}
+    rpc FinishTask (FinishTaskRequest) returns (FinishTaskReply) {}
+}
+
+message GetTaskRequest {
+    uint32 num = 1;
+}
+
+message GetTaskReply {
+    repeated Sound rows = 1;
+}
+
+message Sound {
+    uint32 id = 1;
+    uint32 user_id = 2;
+    uint32 duration = 3;
+    string soundurl = 4;
+    sint32 checked = 5;
+    uint32 time = 6;
+    bool run  = 7;
+}
+
+message FinishTaskRequest {
+    uint32 id = 1;
+}
+
+message FinishTaskReply {
+    bool status = 1;
+}

@@ -12,15 +12,16 @@ function startTask() {
     let cb = (err, id) => {
         logger.info(`sound ${id} compressed finished`);
         candidates.finishTask(id);
-        let task = candidates.getTask(1);
+        let task = candidates.getTasks(1);
         q.push(task, cb);
     }
-    let tasks = candidates.getTask(4);
+    // @TODO get concurrent number from configure
+    let tasks = candidates.getTasks(4);
     q.start(tasks, cb);
 }
 
 function main() {
-    // TODO 区分 master 和 slave
+    // @TODO 区分 master 和 slave
     timing_task(() => candidates.update(), 30);
     timing_task(startTask, 4);
 }
