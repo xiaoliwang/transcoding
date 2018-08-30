@@ -13,8 +13,9 @@ const TEMP_PATH = path.join(RUNTIME_PATH, "temp");
 const LOG_PATH = path.join(RUNTIME_PATH, "log");
 const DB_PATH = path.join(RUNTIME_PATH, "db");
 const DB_FILE = path.join(DB_PATH, "datafile");
+const PROTO_ROOT = path.join(BASE_PATH, "protos");
 
-let PATHS = [RUNTIME_PATH, TEMP_PATH, LOG_PATH, DB_PATH];
+let PATHS = [RUNTIME_PATH, TEMP_PATH, LOG_PATH, DB_PATH, PROTO_ROOT];
 for (PATH of PATHS) {
     if (!fs.existsSync(PATH)) fs.mkdirSync(PATH);
 }
@@ -22,3 +23,4 @@ for (PATH of PATHS) {
 exports.TEMP_PATH = TEMP_PATH;
 exports.LOG_PATH = LOG_PATH;
 exports.DB_FILE = DB_FILE;
+exports.PROTO_ROOT = PROTO_ROOT
