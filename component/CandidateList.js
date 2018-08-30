@@ -1,29 +1,29 @@
 const R = require("ramda");
 const { getDB } = require("../lib/DBConnection");
-const { getData } = require("../lib/TestTool");
 
 const candidates = [];
 
 async function getSounds() {
     let conn = await getDB();
-    let sql = `SELECT id, user_id, duration, soundurl, checked FROM m_sound where checked = -1 order by id limit 10`;
+    // @WORKAROUND 这边查询代码需要进一步调整
+    let sql = `SELECT id, user_id, duration, soundurl, checked FROM m_sound where checked = -1 order by id limit 5`;
     let rows = await conn.find(sql);
-    console.log(rows);
-    
     return rows;
 }
 
 candidates.__proto__.update = async function() {
     let rows = await getSounds();
     let time = Math.floor(Date.now() / 1000);
+    new_elem:
     for (let row of rows) {
         for (let sound of this) {
-            if (row.id === sound.id) break;
+            if (row.id === sound.id) continue new_elem;
         }
         row.time = time;
         row.run = false;
         this.push(row);
     }
+    // @TODO 这里需要对任务优先级进行处理
 }
 
 candidates.__proto__.getTasks = function(num) {
@@ -45,9 +45,6 @@ candidates.__proto__.finishTask = function(id) {
     this.splice(index, 1);
     return true;
 }
-
-// @TODO get tasks from remote
-// @TODO finish task from remote
 
 module.exports = candidates;
 

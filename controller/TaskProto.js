@@ -5,9 +5,6 @@ const { PROTO_ROOT } = require("../config/system");
 const candidates = require("../component/CandidateList");
 
 const PROTO_PATH = path.join(PROTO_ROOT, "task.proto");
-
-const asyncSleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
 const packageDefinition = protoLoader.loadSync(
     PROTO_PATH,
     {keepCase: true,
@@ -32,12 +29,11 @@ function getTasks(call, callback) {
     }
 }
 
-async function finishTask(call, callback) {
+function finishTask(call, callback) {
     let err = null;
     let resp;
     try {
         let id = call.request.id;
-        await asyncSleep(8000);
         resp = { status: candidates.finishTask(id) };
     } catch (e) {
         err = e;

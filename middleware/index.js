@@ -24,10 +24,12 @@ function middleware(app) {
     app.use(async (ctx, next) => {
         try {
             await next();
+            // @WORKAROUND 调试结束后移除
             console.log(ctx.response.status);
             if (ctx.body) return ctx.body = { success: true, info: ctx.body }
             ctx.body = { success: false, info: "Not Found" }
         } catch(e) {
+            // @WORKAROUND 调试结束后移除
             console.log(ctx.response.status);
             // @TODO 报错需要发送邮件
             let msg = (typeof e === "object") ? e.message : e;

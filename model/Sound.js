@@ -3,7 +3,7 @@ const path = require("path");
 const R = require("ramda");
 const { getDB } = require("../lib/DBConnection");
 const { TEMP_PATH } = require("../config/system");
-const { getFileName, mkdirSync } = require("../lib/MyFile");
+const { getFileName, mkdirSync, unlinkAsync } = require("../lib/MyFile");
 const logger = require("../lib/Logger");
 const oss = require("../component/OSS");
 const ffmpeg = require("../component/FFmpeg");
@@ -52,15 +52,19 @@ class Sound {
     }
 
     async compressSound() {
+        let local_paths = [];
         try {
             let local_path = await this.download();
+            local_paths.push(local_path);
             let info = ffmpeg.getSoundInfo(local_path);
             this.duration = parseInt(info.duration * 1000);
             if (!info.bit_rate) throw new Error(`sound ${this.id} is not a good sound`);
             let bit_rate = Math.round(info.bit_rate / 1000, 0);
             let task = task_list.newTask(this.id, bit_rate, this.relative_remote_path);
+        
             for (let sub_task of task.sub_tasks) {
                 let output_file = ffmpeg.toMP3(local_path, sub_task.rate);
+                local_paths.push(output_file);
                 sub_task.updateStatus(0.7);
                 // @WORKAROUND 更换回上传代码
                 await asyncSleep(2000);
@@ -73,9 +77,13 @@ class Sound {
             logger.info(`sound ${this.id} compressed successed`);
         } catch(e) {
             logger.error(`the error sound_id is ${this.id}。reason is ${e.stack || e}`);
-            // @TODO update sounds checked = -3;
+            let conn = await getDB();
+            let update_sql = `UPDATE m_sound SET \`checked\` = -3 WHERE id = ${this.id}`;
+            await conn.execute(update_sql);
         } finally {
-            // @TODO Delete local file
+            for (let path of local_paths) {
+                await unlinkAsync(path);
+            }
         }
     }
 }

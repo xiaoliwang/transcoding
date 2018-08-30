@@ -3,18 +3,11 @@
 const q = require("../lib/ControlFlow");
 const logger = require("../lib/Logger");
 const { timing_task } = require("../lib/Utils");
+const { CLIENTINTERVAL } = require("../config/runtime")
 
 
 async function startTask() {
     q.start();
 }
 
-timing_task(startTask, 2);
-
-/*
-function main() {
-    q.timing_task(startTask, 4);
-}
-
-main();
-*/
+timing_task(startTask, CLIENTINTERVAL);
