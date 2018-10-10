@@ -58,22 +58,24 @@ candidates.__proto__.getTasks = function(num) {
  */
 function addTask(sound, isTop){
     let index = findIndexByAttr('id', sound.id, candidates)
-    if (-1 === index) {
-        // 当音频不在压缩数组队列中时，将其加入队列头
-        sound.time = Math.floor(Date.now() / 1000)
-        sound.run = false
-    } else if (isTop && index > 0 && !candidates[index].run) {
-        // 若音频不在在压缩队列队头并且还未压缩时，将其放至队列头
-        sound = candidates[index]
-        // 删除原来的元素再进行插入，避免删除前就被取出的情况
-        candidates.splice(index, 1)
-    } else {
+    if (index > 0) {
+      if (candidates[index].run || !isTop) {
+        // 当音频已压缩或不需要置顶时，不做改动
         return
-    }
-    if (isTop) {
-        candidates.unshift(sound)
+      }
+      sound = candidates[index]
+      // 删除原来的元素再进行插入，避免删除前就被取出的情况
+      candidates.splice(index, 1)
+      candidates.unshift(sound)
     } else {
+      // 当音频不在压缩数组队列中时，将其加入队列
+      sound.time = Math.floor(Date.now() / 1000)
+      sound.run = false
+      if (isTop) {
+        candidates.unshift(sound)
+      } else {
         candidates.push(sound);
+      }
     }
 }
 
