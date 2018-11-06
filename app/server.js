@@ -7,7 +7,7 @@ const { controller, serviceRegist} = require("../controller");
 const command = require("../command/server");
 const logger = require("../lib/Logger");
 const { WEBCONF, GRPCCONF, SOCKETCONF } = require("../config/runtime");
-const socketIO = require('../lib/SocketServer')
+const socketIO = require('../lib/SocketServer');
 
 // 本地开始运行定时任务
 command();
@@ -16,7 +16,7 @@ command();
 const app = new Koa();
 
 // 启动 socketIO 服务并监听端口
-socketIO.start(app, SOCKETCONF.port)
+socketIO.start(app, SOCKETCONF.port);
 
 middleware(app);
 controller(app);
