@@ -2,9 +2,10 @@
 
 const path = require("path");
 const fs = require("fs");
-const { execSync } = require("child_process");
+const childProcess = require("child_process");
 const { ffmpeg, ffprobe, TEMP_PATH } = require("../config/system");
 const { getFileName } = require("../lib/MyFile");
+const { promisify } = require('util');
 
 /**
  * 获取音频相关信息
@@ -20,7 +21,7 @@ function getSoundInfo(input_file, entries="duration,bit_rate") {
     if (!fs.existsSync(input_file)) throw new Error(`File ${input_file} not exists`);
     let show_entries = entries ? `-show_entries format=${entries}` : "-show_format";
     let cmd = `${ffprobe} -v quiet -print_format json ${show_entries} -i ${input_file}`;
-    let stdout = execSync(cmd);
+    let stdout = childProcess.execSync(cmd);
     let info = JSON.parse(stdout).format;
     return info;
 }
@@ -35,13 +36,14 @@ function getSoundInfo(input_file, entries="duration,bit_rate") {
  * 
  * @throws 文件不存在或者比特率不合法时报错
  */
-function toMP3(input_file, rate) {
+async function toMP3(input_file, rate) {
     if (!fs.existsSync(input_file)) throw new Error(`File ${input_file} not exists`);
     let file_name = getFileName(input_file, false);
     let output_file = `${file_name}_${rate}.mp3`;
     output_file = path.join(TEMP_PATH, output_file);
     let cmd = `${ffmpeg} -i ${input_file} -y -vn -v quiet -b:a ${rate}k -ar 44100 -f mp3 ${output_file}`;
-    execSync(cmd);
+    let execSync = promisify(childProcess.exec)
+    await execSync(cmd)
     return output_file;
 }
 

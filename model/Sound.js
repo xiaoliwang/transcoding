@@ -63,7 +63,7 @@ class Sound {
             let task = task_list.newTask(this.id, bit_rate, this.relative_remote_path);
         
             for (let sub_task of task.sub_tasks) {
-                let output_file = ffmpeg.toMP3(local_path, sub_task.rate);
+                let output_file = await ffmpeg.toMP3(local_path, sub_task.rate);
                 local_paths.push(output_file);
                 sub_task.updateStatus(0.7);
                 // @WORKAROUND 更换回上传代码
