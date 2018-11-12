@@ -7,6 +7,8 @@ const { ffmpeg, ffprobe, TEMP_PATH } = require("../config/system");
 const { getFileName } = require("../lib/MyFile");
 const { promisify } = require('util');
 
+const execAsync = promisify(childProcess.exec);
+
 /**
  * 获取音频相关信息
  * 
@@ -17,13 +19,12 @@ const { promisify } = require('util');
  * 
  * @throws 文件不存在或者项不合法时报错
  */
-function getSoundInfo(input_file, entries="duration,bit_rate") {
+async function getSoundInfo(input_file, entries="duration,bit_rate") {
     if (!fs.existsSync(input_file)) throw new Error(`File ${input_file} not exists`);
     let show_entries = entries ? `-show_entries format=${entries}` : "-show_format";
     let cmd = `${ffprobe} -v quiet -print_format json ${show_entries} -i ${input_file}`;
-    let stdout = childProcess.execSync(cmd);
-    let info = JSON.parse(stdout).format;
-    return info;
+    let stdoutInfo = await execAsync(cmd);
+    return JSON.parse(stdoutInfo.stdout).format
 }
 
 /**
@@ -42,8 +43,7 @@ async function toMP3(input_file, rate) {
     let output_file = `${file_name}_${rate}.mp3`;
     output_file = path.join(TEMP_PATH, output_file);
     let cmd = `${ffmpeg} -i ${input_file} -y -vn -v quiet -b:a ${rate}k -ar 44100 -f mp3 ${output_file}`;
-    let execSync = promisify(childProcess.exec)
-    await execSync(cmd)
+    await execAsync(cmd);
     return output_file;
 }
 

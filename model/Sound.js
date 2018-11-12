@@ -56,7 +56,7 @@ class Sound {
         try {
             let local_path = await this.download();
             local_paths.push(local_path);
-            let info = ffmpeg.getSoundInfo(local_path);
+            let info = await ffmpeg.getSoundInfo(local_path);
             this.duration = parseInt(info.duration * 1000);
             if (!info.bit_rate) throw new Error(`sound ${this.id} is not a good sound`);
             let bit_rate = Math.round(info.bit_rate / 1000, 0);
