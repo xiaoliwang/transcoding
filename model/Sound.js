@@ -8,7 +8,6 @@ const logger = require("../lib/Logger");
 const oss = require("../component/OSS");
 const ffmpeg = require("../component/FFmpeg");
 const task_list = require("../component/TaskList");
-const { asyncSleep } = require("../lib/sync");
 
 class Sound {    
     constructor({id, user_id, duration, soundurl, checked}) {
@@ -66,9 +65,7 @@ class Sound {
                 let output_file = await ffmpeg.toMP3(local_path, sub_task.rate);
                 local_paths.push(output_file);
                 sub_task.updateStatus(0.7);
-                // @WORKAROUND 更换回上传代码
-                await asyncSleep(2000);
-                // await oss.put(sub_task.remote_path, output_file);
+                await oss.put(sub_task.remote_path, output_file);
                 sub_task.done();
             }
             let conditions = R.map((sub_task) => 

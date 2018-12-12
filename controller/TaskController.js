@@ -17,7 +17,6 @@ function TaskController(router) {
      * 将音频优先进行压缩
      *
      * @param {Number} id 音频 ID
-     * @todo 需要对请求来源进行验证
      */
     router.post('/transcode-sound', async (ctx, next) => {
       let soundId = parseInt(ctx.request.body.id);
@@ -29,8 +28,6 @@ function TaskController(router) {
 
     /**
      * 获取音频压缩情况
-     *
-     * @todo 需要对请求来源进行验证
      */
     router.post('/get-transcoding-info', async ctx => {
       let compressInfo = new CompressInfo();
