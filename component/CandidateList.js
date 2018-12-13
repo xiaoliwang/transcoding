@@ -58,7 +58,7 @@ candidates.__proto__.getTasks = function(num) {
  */
 function addTask(sound, isTop){
     let index = findIndexByAttr('id', sound.id, candidates)
-    if (index > 0) {
+    if (index > -1) {
       if (candidates[index].run || !isTop) {
         // 当音频已压缩或不需要置顶时，不做改动
         return
