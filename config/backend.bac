@@ -1,0 +1,3 @@
+module.exports = {
+    banVip: [], // 禁止自动过审的金 V 用户 ID，需为整型元素
+}
