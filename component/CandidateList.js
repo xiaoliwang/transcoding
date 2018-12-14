@@ -6,8 +6,8 @@ const candidates = [];
 
 async function getSounds() {
     let conn = await getDB();
-    // @WORKAROUND 这边查询代码需要进一步调整
-    let sql = `SELECT id, user_id, duration, soundurl, checked FROM m_sound where checked = -1 order by id limit 5`;
+    // 每次查询 50 条保证任务队列永远有富余的任务
+    let sql = `SELECT id, user_id, duration, soundurl, checked FROM m_sound where checked = -1 order by id limit 50`;
     let rows = await conn.find(sql);
     return rows;
 }

@@ -8,6 +8,8 @@ const logger = require("../lib/Logger");
 const oss = require("../component/OSS");
 const ffmpeg = require("../component/FFmpeg");
 const task_list = require("../component/TaskList");
+const backend = require('../config/backend');
+
 
 class Sound {    
     constructor({id, user_id, duration, soundurl, checked}) {
@@ -35,11 +37,13 @@ class Sound {
     async updateStatus(conditions) {
         if (!conditions.length) return;
         let conn = await getDB();
-        let checked = (-1 === this.checked) ? 0 : this.checked;
+        // 若音频为待转码或转码失败状态，则更改状态为待审核
+        let checked = (-1 === this.checked || -3 === this.checked) ? 0 : this.checked;
         if (!checked) {
             let user_sql = `SELECT confirm FROM mowangskuser where id = ${this.user_id}`;
             let user = await conn.findOne(user_sql);
-            if (user.confirm & (1 << 5)) {
+            if (user.confirm & (1 << 5) && -1 === R.indexOf(parseInt(this.user_id), backend.banVip)) {
+                // 若为特殊金 V 用户，则转码后直接过审
                 checked = 1;
                 let soundnum_sql = `UPDATE mowangskuser SET soundnumchecked = soundnumchecked +1 WHERE id = ${this.user_id}`;
                 await conn.execute(soundnum_sql);

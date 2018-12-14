@@ -21,12 +21,12 @@ class Task {
     constructor(task_list, sound_id, bit_rate, relative_remote_path) {
         let sub_tasks = [];
         switch(true) {
-        case (bit_rate > 128):
-            sub_tasks.push(new SubTask(this, 128, relative_remote_path));
-        case (bit_rate > 32) :
-            sub_tasks.push(new SubTask(this, 32, relative_remote_path));
-        default:
-            sub_tasks.push(new SubTask(this, 64, relative_remote_path));
+            case (bit_rate >= 128):
+                sub_tasks.push(new SubTask(this, '128', 128, relative_remote_path));
+            case (bit_rate >= 32):
+                sub_tasks.push(new SubTask(this, '32', 32, relative_remote_path));
+            default:
+                sub_tasks.push(new SubTask(this, '64', bit_rate, relative_remote_path));
         }
         this.task_list = task_list;
         this.sub_tasks = sub_tasks;
@@ -46,11 +46,11 @@ class Task {
 }
 
 class SubTask {
-    constructor(task, rate, relative_remote_path) {
+    constructor(task, filedName, rate, relative_remote_path) {
         this.task = task;
-        this.filed = `soundurl_${rate}`;
+        this.filed = `soundurl_${filedName}`;
         this.rate = rate;
-        this.dir = 64 === rate ? "MP3" : `${rate}BIT`;
+        this.dir = '64' === filedName ? 'MP3' : `${filedName}BIT`;
         this.status = SubTask.UNDONE;
         this.remote_path = path.join(this.dir, relative_remote_path);
     }
