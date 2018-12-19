@@ -6,8 +6,8 @@ const candidates = [];
 
 async function getSounds() {
     let conn = await getDB();
-    // 每次查询 50 条保证任务队列永远有富余的任务
-    let sql = `SELECT id, user_id, duration, soundurl, checked FROM m_sound where checked = -1 order by id limit 50`;
+    // @todo 需根据转码优先级对查询结果进行排序
+    let sql = 'SELECT id, user_id, duration, soundurl, checked FROM m_sound WHERE checked = -1 ORDER BY id LIMIT 50';
     let rows = await conn.find(sql);
     return rows;
 }

@@ -10,6 +10,7 @@ function TaskController(router) {
     });
 
     router.get("/error", (ctx, next) => {
+        ctx.response.status = 500;
         throw new Error("fuck");
     });
 

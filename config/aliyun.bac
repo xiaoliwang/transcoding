@@ -9,6 +9,7 @@ const configs = {
         internal: false,
         secure: false,
         bucket: "",
+        timeout: 18000,
     }
 };
 

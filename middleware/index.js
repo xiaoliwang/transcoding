@@ -2,11 +2,14 @@
 
 const bodyParser = require("koa-bodyparser");
 const logger = require("koa-logger");
+const winstonLogger = require("../lib/Logger");
 const getRawBody = require('raw-body')
 const validator = require('validator');
 const { ENV } = require("../config/system");
 const { hash_hmac, base64_decode } = require("../lib/Utils")
 const { SECRET_KEY } = require("../config/key")
+const { apiRecipient } = require('../config/backend');
+const Email = require("../component/Email");
 
 function middleware(app) {
     app.use(async (ctx, next) => {
@@ -31,8 +34,18 @@ function middleware(app) {
             if (ctx.body) return ctx.body = { success: true, info: ctx.body }
             ctx.body = { success: false, info: "Not Found" }
         } catch(e) {
-            // @TODO 报错需要发送邮件
             let msg = (typeof e === "object") ? e.message : e;
+            if (ctx.response.status >= 500) {
+                // 接口请求异常时记录到日志
+                winstonLogger.error(msg);
+                // 发送邮件通知管理员
+                let email = new Email(apiRecipient);
+                let subject = '音频转码后台接口请求异常';
+                let content = `<b style="color: #6c9e71">[请求时间]</b></br>${new Date()}</br>
+                    <b style="color: #9e534b">[错误信息]</b></br>${msg}</br>
+                    <b style="color: #528690">[请求头信息]</b></br>${JSON.stringify(ctx.request)}`;
+                email.send(subject, content);
+            }
             ctx.body = {
                 success: false,
                 info: msg
