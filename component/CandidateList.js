@@ -2,14 +2,53 @@ const R = require("ramda");
 const { getDB } = require("../lib/DBConnection");
 const { findIndexByAttr } = require("../lib/Utils");
 
+// 音频按直播（catalog_id 为 80）与非直播类型进行分组
+const groupByCatalog = R.groupBy((sound) => {
+    return sound.catalog_id === 80  ? 'live' : 'other';
+})
+
 const candidates = [];
 
 async function getSounds() {
     let conn = await getDB();
-    // @todo 需根据转码优先级对查询结果进行排序
-    let sql = 'SELECT id, user_id, duration, soundurl, checked FROM m_sound WHERE checked = -1 ORDER BY id LIMIT 50';
-    let rows = await conn.find(sql);
-    return rows;
+    // 任务队列最大任务数量
+    let MAX_COUNT = 50;
+    let sql = `SELECT id, user_id, duration, soundurl, checked, source, catalog_id FROM m_sound WHERE checked = -1
+        ORDER BY id LIMIT 1000`;
+    let sounds = await conn.find(sql);
+    needCount = MAX_COUNT - candidates.length;
+    if (0 === needCount) {
+        // 若任务队列满额，则不添加新的任务
+        return [];
+    }
+    // 按转码优先级对查询结果进行排序
+    sounds = order(sounds)
+    sounds = sounds.slice(0, needCount)
+    return sounds;
+}
+
+/**
+ * 按转码优先级对查询结果进行排序
+ * 当前排序方式为直播分类放在最后，其他分类按照原创先于搬运进行排序
+ *
+ * @param {Sound[]} sounds 查询出来的音频对象组成的数组
+ * @return {Sound[]} 排序好以后的数组
+ */
+function order(sounds) {
+    let newSounds = [];
+    for (sound of sounds) {
+        if (-1 === findIndexByAttr('id', sound.id, candidates)) {
+            newSounds.push(sound);
+        }
+    }
+    if (0 === newSounds.length) {
+        return [];
+    }
+    let newSoundGroup = groupByCatalog(newSounds)
+    let liveSounds = newSoundGroup.live || [];
+    let otherSounds = newSoundGroup.other || [];
+    otherSounds = R.sort(R.descend(R.prop('source')), otherSounds);
+    return R.concat(otherSounds, liveSounds);
 }
 
 /**
