@@ -8,7 +8,8 @@ const logger = require("../lib/Logger");
 const oss = require("../component/OSS");
 const ffmpeg = require("../component/FFmpeg");
 const task_list = require("../component/TaskList");
-const backend = require('../config/backend');
+const { banVip, transcodingRecipient } = require('../config/backend');
+const Email = require("../component/Email");
 
 
 class Sound {    
@@ -42,7 +43,7 @@ class Sound {
         if (!checked) {
             let user_sql = `SELECT confirm FROM mowangskuser where id = ${this.user_id}`;
             let user = await conn.findOne(user_sql);
-            if (user.confirm & (1 << 5) && -1 === R.indexOf(parseInt(this.user_id), backend.banVip)) {
+            if (user.confirm & (1 << 5) && -1 === R.indexOf(parseInt(this.user_id), banVip)) {
                 // 若为特殊金 V 用户，则转码后直接过审
                 checked = 1;
                 let soundnum_sql = `UPDATE mowangskuser SET soundnumchecked = soundnumchecked +1 WHERE id = ${this.user_id}`;
@@ -77,10 +78,17 @@ class Sound {
             await this.updateStatus(conditions);
             logger.info(`sound ${this.id} compressed successed`);
         } catch(e) {
-            logger.error(`the error sound_id is ${this.id}。reason is ${e.stack || e}`);
+            let error_info = `the error sound_id is ${this.id}。reason is ${e.stack || e}`
+            logger.error(error_info);
             let conn = await getDB();
             let update_sql = `UPDATE m_sound SET \`checked\` = -3 WHERE id = ${this.id}`;
             await conn.execute(update_sql);
+            // 转码失败时发送邮件通知管理员
+            let email = new Email(transcodingRecipient)
+            let subject = '音频转码失败'
+            let content = `<b style="color: #6c9e71">[时间]</b></br>${new Date()}</br>
+                 <b style="color: #9e534b">[错误信息]</b></br>${error_info}</br>`
+            await email.send(subject, content)
         } finally {
             for (let path of local_paths) {
                 await unlinkAsync(path);
