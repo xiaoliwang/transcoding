@@ -6,3 +6,4 @@ coverage/
 __demo__/file/
 __test__/file/
 config/*.js
+!config/*.bac.js
