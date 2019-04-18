@@ -20,7 +20,20 @@ for (PATH of PATHS) {
     if (!fs.existsSync(PATH)) fs.mkdirSync(PATH);
 }
 
+/**
+ * 获取 http 请求头中需要设置的 user-agent
+ *
+ * @return {string}
+ */
+function getUserAgent() {
+    // 获取 package.json 文件信息
+    let packageJson = fs.readFileSync(BASE_PATH + '/package.json');
+    packageJson = JSON.parse(packageJson);
+    return `${packageJson.name}/${packageJson.version}`;
+}
+
 exports.TEMP_PATH = TEMP_PATH;
 exports.LOG_PATH = LOG_PATH;
 exports.DB_FILE = DB_FILE;
-exports.PROTO_ROOT = PROTO_ROOT
+exports.PROTO_ROOT = PROTO_ROOT;
+exports.USER_AGENT = getUserAgent();

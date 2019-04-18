@@ -1,5 +1,5 @@
 {
-  "name": "compression",
+  "name": "transcoding",
   "version": "0.0.1",
   "description": "a sound compression tool",
   "main": "index.js",

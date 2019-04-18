@@ -47,7 +47,8 @@ class Sound {
                 // 若为自动过审用户，则 confirm 字段值比特位第 5 位为 1
                 // 参考文档：https://github.com/MiaoSiLa/missevan-doc/blob/master/product/%E7%94%A8%E6%88%B7_confirm_%E5%AD%97%E6%AE%B5%E5%80%BC%E7%BA%A6%E5%AE%9A.md
                 checked = 1;
-                let soundnum_sql = `UPDATE mowangskuser SET soundnumchecked = soundnumchecked +1 WHERE id = ${this.user_id}`;
+                let soundnum_sql = `UPDATE mowangskuser SET soundnumchecked = soundnumchecked + 1
+                    WHERE id = ${this.user_id}`;
                 await conn.execute(soundnum_sql);
             }
         }
