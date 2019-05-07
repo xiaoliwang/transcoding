@@ -53,7 +53,9 @@ class Sound {
             }
         }
         let set = R.join(",", R.map((condition) => `\`${condition.key}\` = "${condition.value}"`, conditions));
-        let update_sql = `UPDATE m_sound SET ${set}, \`checked\` = ${checked}, \`duration\` = ${this.duration} WHERE id = ${this.id}`;
+        // FIXME: 音频存在重复转码的 BUG，此处添加不修改状态被改动的记录的条件解决“反审”问题，之后需要修复重复转码问题
+        let update_sql = `UPDATE m_sound SET ${set}, \`checked\` = ${checked}, \`duration\` = ${this.duration}
+            WHERE id = ${this.id} AND checked = ${this.checked}`;
         await conn.execute(update_sql);
     }
 
