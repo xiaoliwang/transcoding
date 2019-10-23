@@ -30,6 +30,7 @@ app.on("error", (err, ctx) => {
 const server = new grpc.Server();
 serviceRegist(server);
 
-app.listen(WEBCONF.port || 3000, WEBCONF.ip || "0.0.0.0");
-server.bind(`${GRPCCONF.ip || "0.0.0.0"}:${GRPCCONF.port || 50051}`, grpc.ServerCredentials.createInsecure());
+// 监听 IP 为 0.0.0.0 以保证 K8s 集群中服务可被发现
+app.listen(WEBCONF.port || 3000, '0.0.0.0');
+server.bind(`0.0.0.0:${GRPCCONF.port || 50051}`, grpc.ServerCredentials.createInsecure());
 server.start();

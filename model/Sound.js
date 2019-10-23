@@ -24,7 +24,7 @@ class Sound {
         this.local_path = path.join(TEMP_PATH, this.file_name);
 
         let dir = path.dirname(soundurl);
-        this.relative_remote_path = path.join(dir, getFileName(soundurl, false) + ".mp3");
+        this.relative_remote_path = `${dir}/${getFileName(soundurl, false)}.mp3`;
     }
 
     async download() {

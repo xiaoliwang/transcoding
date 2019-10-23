@@ -52,7 +52,7 @@ class SubTask {
         this.rate = rate;
         this.dir = '64' === filedName ? 'MP3' : `${filedName}BIT`;
         this.status = SubTask.UNDONE;
-        this.remote_path = path.join(this.dir, relative_remote_path);
+        this.remote_path = `${this.dir}/${relative_remote_path}`;
     }
 
     updateStatus(progress) {
