@@ -7,10 +7,14 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 COPY package.json /home/www/transcoding/
 
-RUN apk --update --no-cache add python
 RUN npm config set registry https://registry.npm.taobao.org \
     && npm install \
+    && chmod +x ./entrypoint.sh \
     && mkdir .runtime \
     && chmod -R a+w .runtime
 
 COPY . .
+
+USER nobody
+
+ENTRYPOINT ["entrypoint.sh"]
