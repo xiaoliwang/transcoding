@@ -36,7 +36,23 @@ function TaskController(router) {
       ctx.body = await compressInfo.getSoundStatus();
     })
 
-    return router;
+  /**
+   * 获取音频转码任务情况
+   */
+  router.post('/get-task-info', async ctx => {
+    let taskList = [];
+    for (let candidate of candidates) {
+      let task = {
+        sound_id: candidate.id,
+        run: candidate.run,
+        time: candidate.time,
+      }
+      taskList.push(task);
+    }
+    ctx.body = taskList;
+  })
+
+  return router;
 }
 
 module.exports = TaskController;
